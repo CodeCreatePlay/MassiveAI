@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace MassiveAI.StateMachineDemo
 {
@@ -91,6 +92,9 @@ namespace MassiveAI.StateMachineDemo
 		
 		// Debug
 		[SerializeField] private string info;
+		
+		// Other
+		private InputAction spaceAction;
 
 
         private void Start()
@@ -118,13 +122,21 @@ namespace MassiveAI.StateMachineDemo
 
             // Switch to a default state
             stateMachine.SwitchState(IDLE_STATE);
+			
+			// Other
+			// Initialize input system
+			spaceAction = new InputAction("Jump", binding: "<Keyboard>/space");
+			spaceAction.performed += ctx => current_health = 0;
+			spaceAction.Enable();
         }
+		
+	   private void OnDestroy()
+		{
+			spaceAction.Disable();
+		}
 
         private void Update()
-        {
-			if(Input.GetKey(KeyCode.Space))
-				current_health = 0;
-			
+        {			
             if (stateMachine != null)
                 stateMachine.Update();
 			
